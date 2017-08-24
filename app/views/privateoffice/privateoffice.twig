@@ -1,0 +1,162 @@
+{% extends  'layout.twig' %}
+
+{% block content %}
+
+    <div class="b-context">
+        <div class="b-profile">
+
+            <div class="b-profile_content b-context">
+                <div class="b-profile_name">
+                    <h2>{{ user.email }}</h2>
+                    {% if licenses|length > 0 %}
+                        <a href="/files/mobitvaAtomBot.zip" class="n-button big blue" style="float: right; width: 200px; height: 45px; margin-top: 20px;  margin-right: 5px;">Скачать Бота</a>
+                    {% endif %}
+                    <a href="/files/KEmulator.zip" class="n-button big" style="float: right; width: 200px; height: 45px; margin-top: 20px; margin-right: 5px">Скачать Эмулятор</a>
+                </div>
+                <div class="b-profile_info">
+                    <dl class="b-pn_info">
+                        <dt>Дата регистации:</dt>
+                        <dd>{{ user.created_at|date("d.m.Y") }}</dd>
+                    </dl>
+                    <dl class="b-pn_info">
+                        <dt>Количество актиных лицензий:</dt>
+                        <dd><a href="javascript:void(0)">{{ licenses|length }}</a></dd>
+                    </dl>
+                </div>
+
+                <p>
+                    Для работы бота нужен настроенный особым образом эмулятор (KEmulator v0.98). <br />
+                    Вы можете скачать уже настроенный эмулятор с этой страницы. <br />
+                </p>
+
+
+                <div class="b-profile_progress">
+                    <div class="b-pp_header">
+                        <div class="b-pp_head"><a href="javascript:void(0)" class="l-pp_head">Активные лицензии</a></div>
+                    </div>
+                    <div class="b-pp_content">
+
+                        <div class="b-context">
+                            {% if licenses|length %}
+                                <table class="b-table" style="width: 550px;">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-date" style="width: 40%">Номер лицензии</th>
+                                        <th class="t-date">Дата Создания</th>
+                                        <th class="t-date">Дата Окончания</th>
+                                        <th class="t-date">
+                                            {#Осталось дней#}
+                                            Ключ-файл
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in licenses %}
+                                        <tr>
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.created_at|date('d.m.Y') }}</td>
+                                            <td>{{ item.expired_at|date('d.m.Y') }}</td>
+                                            <td>
+                                                <a href="/get-key-file/{{ item.id }}">Скачать</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div style="width: 100%; padding: 10px;" class="right">
+                                    <a href="/buy" class="n-button small green right" title="Купить/Продлить лицензии">Купить/Продлить лицензии</a>
+                                </div>
+                            {% else %}
+                                Не найдено ни одной активной лицензии! <a href="/buy" class="n-button big green right" title="добавить">Купить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="b-profile_progress">
+                    <div class="b-pp_header">
+                        <div class="b-pp_head"><a href="javascript:void(0)" class="l-pp_head">Настройки</a></div>
+                    </div>
+                    <div class="b-pp_content">
+
+                        <div class="b-context">
+                            {% if settings|length %}
+                                <table class="b-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-date">ID</th>
+                                        <th class="t-name">Название</th>
+                                        <th class="t-name">
+                                            <a href="/settings/create" class="n-button small green right" title="добавить">Создать</a>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in settings %}
+                                        <tr>
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.name }}</td>
+                                            <td>
+                                                <div class="bw-button line" style="float: right !important;">
+                                                    <a href="/settings/{{ item.id }}/edit" class="n-button small green">Редактировать</a>
+                                                    <a href="javascript:void(0)" class="n-button small black delete_settings" data-settings-id="{{ item.id }}">Удалить</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                Не найдено ни одной настройки! <a href="/settings/create" class="n-button small green right" title="добавить">Создать</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="b-profile_progress">
+                    <div class="b-pp_header">
+                        <div class="b-pp_head"><a href="javascript:void(0)" class="l-pp_head">Алгоритмы</a></div>
+                    </div>
+                    <div class="b-pp_content">
+
+                        <div class="b-context">
+                            {% if configs|length %}
+                                <table class="b-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="t-date">ID</th>
+                                        <th class="t-name">Название</th>
+                                        <th class="t-name">
+                                            <a href="/config/create" class="n-button small green right" title="добавить">Создать</a>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in configs %}
+                                        <tr>
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.name }}</td>
+                                            <td>
+                                                <div class="bw-button line" style="float: right !important;">
+                                                    <a href="/config/{{ item.id }}/edit" class="n-button small green">Редактировать</a>
+                                                    <a href="javascript:void(0)" class="n-button small black delete_config" data-config-id="{{ item.id }}">Удалить</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                Не найдено ни одного алгоритма! <a href="/config/create" class="n-button small green right" title="добавить">Создать</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

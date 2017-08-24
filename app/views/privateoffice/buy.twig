@@ -1,0 +1,397 @@
+{% extends  'layout.twig' %}
+
+{% block content %}
+
+    <div class="b-context">
+    <h1>Формирование заказа</h1>
+
+
+    <h3>Купить новую лицензию atom-bot для <b>mobitva</b></h3>
+
+
+    <form class="product_form">
+        <table class="b-table" style="width: 650px">
+            {#<thead>#}
+            {#<tr>#}
+            {#<th style="width: 200px; text-align: center;">Период</th>#}
+            {#<th style="width: 200px; text-align: center;">Стоимость</th>#}
+            {#<th></th>#}
+            {#</tr>#}
+            {#</thead>#}
+            <tbody>
+            <tr>
+
+                <td style="width: 200px;">
+                    <select name="count" class="n-select month_select" onchange="drawPrice($(this)); return false;" data-label-id="new_license_price"
+                            data-input-id="new_license_sum">
+                        {% for i in 1..12 %}
+                            <option value="{{ i }}">{{ i }} мес.</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td style="width: 200px; text-align: center; vertical-align: middle;" title="Без учета комиссии платежной системы">
+                    <span id="new_license_price" style="font-size: 20px;"> </span> руб.
+                    {#<span style="cursor: default ;color: red; font-size: 25px;">*</span>#}
+                </td>
+                <td>
+                    <input name="license_id" type="hidden" value=""/>
+                    <input id="new_license_sum" name="sum" type="hidden" value=""/>
+                    <input type="button" class="n-button big black add_product" title="добавить" value="Добавить в корзину"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    {% if licenses|length %}
+        <br/>
+        <h3>Продлить лицензию</h3>
+
+        <table class="b-table" style="width: 100%">
+            <tbody>
+            {% for license in licenses %}
+                <tr class="product_form">
+                    <td style="width: 200px;">
+                        <table style="text-align: left;">
+                            <tr>
+                                <td>Номер лиценции</td>
+                                <td>: <b>{{ license.id }}</b></td>
+                            </tr>
+                            <tr>
+                                <td>Истекает</td>
+                                <td>: {{ license.expired_at|date('d.m.Y') }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 200px;">
+                        <select name="count" class="n-select month_select" id="new_license_month" onchange="drawPrice($(this)); return false;"
+                                data-label-id="new_license_price_{{ license.id }}"
+                                data-input-id="new_license_sum_{{ license.id }}">
+                            {% for i in 1..12 %}
+                                <option value="{{ i }}">{{ i }} мес.</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td style="width: 200px; text-align: center; vertical-align: middle;" title="Без учета комиссии платежной системы">
+                        <span id="new_license_price_{{ license.id }}" style="font-size: 20px;"> </span> руб.
+                        {#<span style="cursor: default ;color: red; font-size: 25px;">*</span>#}
+                    </td>
+                    <td>
+                        <input name="license_id" type="hidden" value="{{ license.id }}"/>
+                        <input id="new_license_sum_{{ license.id }}" name="sum" type="hidden" value=""/>
+                        <input id="add_product_license_{{ license.id }}" type="button" class="n-button big black add_product long_license_btn" title="добавить"
+                               value="Добавить в корзину"/>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <br/>
+    {#<div style="width: 100%">#}
+    {#<span style="cursor: default ;color: red; font-size: 25px;">*</span> Цены указаны без учета комиссии платежной системы#}
+    {#</div>#}
+
+
+    <br/>
+    <br/>
+
+
+    <h1>Ваша корзина</h1>
+
+    <div class="b-profile">
+        <div class="b-profile_content">
+            <div class="b-profile_progress">
+                {#<div class="b-pp_header">#}
+                {#<div class="b-pp_head"><a href="javascript:void(0)" class="l-pp_head">Ваша корзина</a></div>#}
+                {#</div>#}
+                <div class="b-pp_content">
+
+
+                    <table id="cart_items" class="b-table" style="width: 100%; display: none;">
+                        <thead>
+                        <tr>
+                            <th>№</th>
+                            <th style="width: 220px;">Описание</th>
+                            <th style="width: 180px;">Период</th>
+                            <th style="width: 150px;">Сумма</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div id="cart_items_empty" style="font-size: 24px; padding: 10px; width: 100%;">
+                        В корзине нет товаров.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="payment_form_container" style="display: none;">
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+
+        var mCartItem = function (license_id, month) {
+            this.license_id = license_id;
+            this.month = month;
+        };
+
+        var mCart = function () {
+
+            /**
+             *
+             * @type {mCartItem[]}
+             */
+            this.items = [];
+            this.discount = 0;
+
+            this.addItem = function (license_id, month, sum) {
+                this.items.push((new mCartItem(license_id, month, sum)));
+            };
+
+            this.calculatePrice = function () {
+                var price = 0;
+                for (var i in this.items) {
+                    price += getLicensePrice(this.items[i].month);
+                }
+                return price - this.discount;
+            };
+
+            this.calculateDiscount = function () {
+                var price = this.calculatePrice();
+
+                if (price < 500) {
+                    return 0;
+                }
+
+                var percentDiscount = Math.floor(price / 250) * 5;
+                if (percentDiscount > 25) {
+                    percentDiscount = 25;
+                }
+
+                return Math.floor((price / 100) * percentDiscount);
+            };
+
+            this.getPriceWithDiscount = function () {
+                return this.calculatePrice() - this.calculateDiscount();
+            };
+
+            this.deleteCartItem = function (index) {
+                this.items.splice(index, 1);
+            };
+
+            this.getCartItems = function () {
+                var items = [];
+                for (var i in this.items) {
+                    items.push({
+                        license_id: this.items[i].license_id,
+                        month     : this.items[i].month
+                    });
+                }
+                return items;
+            };
+
+            this.drawCart = function () {
+
+
+                $('#cart_items').find('tbody').html('');
+
+                $('.long_license_btn').each(function () {
+                    $(this).removeAttr('disabled');
+                    $(this).removeClass('disabled');
+                });
+
+                if (this.items.length > 0) {
+                    $('#cart_items').show();
+
+                    for (var i in this.items) {
+
+                        if (this.items[i].license_id) {
+                            $('#add_product_license_' + this.items[i].license_id).attr('disabled', 'disabled').addClass('disabled');
+                        }
+
+                        var productDescription = (this.items[i].license_id)
+                                ? 'Продление лицензии <b>№' + this.items[i].license_id + '</b> <br/>atom-bot для mobitva'
+                                : 'Покупка лицензии <br/>atom-bot для mobitva';
+
+
+                        var $tr = $('<tr/>')
+                                .append($('<td/>').html(parseInt(i) + 1))
+                                .append($('<td/>').html(productDescription))
+                                .append($('<td/>').html(this.items[i].month + ' мес.'))
+                                .append($('<td/>').html(getLicensePrice(this.items[i].month) + ' руб.'))
+                                .append($('<td/>')
+                                        .append($('<a/>').addClass('r-close delete_cart_item').attr('data-cart-item-id', i)));
+
+                        $('#cart_items').find('tbody').append($tr);
+                    }
+
+                    var withoutDiscountSumHtml = '';
+                    if (this.calculateDiscount()) {
+
+                        var $tr = $('<tr/>').css('background-color', 'rgba(50,150,50,0.4)').css('vertical-align', 'middle')
+                                .append($('<td/>'))
+                                .append($('<td/>'))
+                                .append($('<td/>').html('Дополнительная скидка:'))
+                                .append($('<td/>').html('<span style="font-size: 18px;">' + this.calculateDiscount() + '</span> руб.'))
+                                .append($('<td/>'));
+
+                        $('#cart_items').find('tbody').append($tr);
+
+                        withoutDiscountSumHtml = '<span style="font-size: 16px; color: red; text-decoration: line-through;">' + Cart.calculatePrice() + ' </span>';
+                    }
+
+
+
+
+                    var $tr = $('<tr/>').css('background-color', 'rgba(100,100,100,0.1)').css('vertical-align', 'middle')
+                            .append($('<td/>'))
+//                            .append($('<td/>'))
+                            .append($('<td/>').attr('colspan', 2).html('<b>Итого к оплате :</b> <br /><span style="color: red;">*</span><span style="color: darkslategray; font-size: 12px">без учета комиссии платежной системы</span>'))
+                            .append($('<td/>').html(withoutDiscountSumHtml + '<span style="font-size: 24px; color: green;">' + Cart.getPriceWithDiscount() + '</span> руб.<span style="cursor: default ;color: red; font-size: 25px;">*</span>'))
+                            .append($('<td/>').attr('rowspan', 1)
+//                                    .html('Вы будете перенаправлены на сайт платежной системы')
+                    );
+
+                    $('#cart_items').find('tbody').append($tr);
+
+                    var $tr = $('<tr/>').css('background-color', 'rgba(100,100,100,0.1)').css('vertical-align', 'middle')
+                            .append($('<td/>').attr('colspan', 3).append(' <input type="checkbox" name="eula_cobfirm" /> Подтверждаю что ознакомлен с <a target="_blank" href="/eula">лицензионным соглашением</a> и принимаю все его положения'))
+//                            .append($('<td/>'))
+                            .append($('<td/>'))
+                            .append($('<td/>'))
+                            .append($('<td/>'));
+
+//                    $('#cart_items').find('tbody').append($tr);
+
+                    var $tr = $('<tr/>').css('background-color', 'rgba(100,100,100,0.1)').css('vertical-align', 'middle')
+//                            .append($('<td/>'))
+//                            .append($('<td/>'))
+                            .append($('<td/>').attr('colspan', 3).append(' <input type="checkbox" id="eula_confirm" /> Подтверждаю что ознакомлен с <a target="_blank" href="/eula">лицензионным соглашением</a> и принимаю все его положения'))
+                            .append($('<td/>')
+                                    .append('<input id="buy_button" type="button" class="n-button big green" title="Оплатить" value="Оплатить"/>'))
+                            .append($('<td/>').html('Вы будете перенаправлены на сайт платежной системы'));
+
+                    $('#cart_items').find('tbody').append($tr);
+
+
+                    $('#cart_items_empty').hide();
+                } else {
+                    $('#cart_items').hide();
+                    $('#cart_items_empty').show();
+                }
+
+            };
+
+        };
+
+        var Cart = new mCart();
+        //        Cart.addItem(0, 3, 135);
+        //        Cart.addItem(0, 2, 95);
+        //        Cart.addItem(0, 2, 95);
+        //        Cart.addItem(1002, 12, 95);
+
+        var licensePrices = {
+            1 : 50,
+            2 : 47.5,
+            3 : 47,
+            4 : 45,
+            5 : 44,
+            6 : 42.5,
+            7 : 42,
+            8 : 41,
+            9 : 40,
+            10: 39,
+            11: 38,
+            12: 37
+        };
+
+        function getLicensePrice(month) {
+            return (month <= 12) ? month * licensePrices[month] : month * licensePrices[12];
+        }
+
+        function drawPrice($select) {
+            var labelId = $select.attr('data-label-id');
+            var inputId = $select.attr('data-input-id');
+            $('#' + labelId).text(getLicensePrice($select.val()));
+            $('#' + inputId).text(getLicensePrice($select.val()));
+        }
+
+        $(function () {
+
+
+            $(document).on('click', 'a.delete_cart_item', function () {
+                var cartItemId = $(this).attr('data-cart-item-id');
+                Cart.deleteCartItem(cartItemId);
+                Cart.drawCart();
+            });
+//
+//            $(document).on('submit', 'form.product_form', function () {
+//                console.log('SUMBIT ' + $(this).serialize());
+//                return false;
+//            });
+
+            $(document).on('click', 'input.add_product', function () {
+
+                var $form = $(this).closest('tr');
+
+                var licenseId = $form.find('[name=license_id]').val();
+                var month = $form.find('[name=count]').val();
+
+                Cart.addItem(licenseId, month);
+                Cart.drawCart();
+
+                return false;
+            });
+
+
+            $(document).on('click', '#buy_button', function () {
+
+                console.log('BUY BUTTON');
+
+                if (!$('#eula_confirm').is(':checked')){
+
+                    $.showMessage({note: 'Перед тем как продолжить, вы должны ознакомиться с лицензионным соглашением и принять его', remove: true});
+
+                    return false;
+                }
+
+
+                $.ajax({
+                    url     : '/get-payment-form',
+                    method  : 'POST',
+                    data    : {
+                        cart: JSON.stringify(Cart.getCartItems())
+                    },
+                    dataType: 'html',
+                    success : function (response) {
+                        $('#payment_form_container').html(response);
+                        $('#w1_payment_form').submit();
+//                        $('#payment_form_container').show();
+                    }
+                });
+
+
+
+                return false;
+            });
+
+
+            $('.month_select').each(function () {
+                drawPrice($(this));
+            });
+
+        });
+
+    </script>
+
+{% endblock %}

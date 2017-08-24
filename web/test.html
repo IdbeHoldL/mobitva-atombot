@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script type="text/javascript">
+
+        //        var locationNames = ['вирастоль', "тракт", "ярмарка","проселок", "стагород"];
+
+        var BGraph = function () {
+            var that = this;
+
+            this.nodes = [];
+            this.matrix = [];
+
+            this.addNode = function (nodeName) {
+                this.nodes.push(nodeName);
+
+                for (var i = 0; i < that.nodes.length; i++) {
+                    if (typeof  that.matrix[i] !== 'undefined') {
+                        that.matrix[i].push(999);
+                    }
+                }
+
+                that.matrix.push(new Array(this.nodes.length))
+
+                for (var i = 0; i < that.nodes.length; i++) {
+                    that.matrix[that.nodes.length - 1][i] = 999;
+                }
+
+                that.matrix[this.nodes.length - 1][this.nodes.length - 1] = 0.1;
+
+                return this.nodes.length - 1;
+            };
+
+            this.addRoute = function (nodeName1, nodeName2, weight) {
+
+                if (typeof weight == 'undefined') {
+                    weight = 0.5;
+                }
+
+                var nodeOneIndex = that.nodes.indexOf(nodeName1);
+                var nodeTwoIndex = that.nodes.indexOf(nodeName2);
+
+                if (nodeOneIndex == -1) {
+                    nodeOneIndex = that.addNode(nodeName1);
+                }
+                if (nodeTwoIndex == -1) {
+                    nodeTwoIndex = that.addNode(nodeName2);
+                }
+
+                that.matrix[nodeOneIndex][nodeTwoIndex] = weight;
+//                that.matrix[nodeTwoIndex][nodeOneIndex] = weight;
+            };
+
+            this.buildMatrix = function () {
+                that.matrix = new Array(that.nodes.length);
+                for (var i = 0; i < that.nodes.length; i++) {
+                    that.matrix[i] = new Array(that.nodes.length);
+                }
+
+                for (var i = 0; i < that.nodes.length; i++) {
+                    for (var j = 0; j < that.nodes.length; j++) {
+                        that.matrix[i][j] = 999;
+                    }
+                }
+            };
+
+            this.getRouteByNodeNames = function (nodeName1, nodeName2, normalizePath) {
+                var nodeIndexOne = that.nodes.indexOf(nodeName1);
+                var nodeIndexTwo = that.nodes.indexOf(nodeName2);
+
+                if (typeof normalizePath === 'undefined' || normalizePath) {
+                    var route = this.getRoute(nodeIndexOne, nodeIndexTwo, [], 0);
+                    var result = [];
+
+                    for (var i in route.allPath) {
+                        result.push(this.nodes[route.allPath[i]]);
+                    }
+
+                    return result;
+                }
+
+                return this.getRoute(nodeIndexOne, nodeIndexTwo, [], 0);
+            };
+
+            this.getRoute = function (nodeIndexOne, nodeIndexTwo, allPath, weight) {
+
+//                if (typeof path == 'undefined') {
+//                    var path = [];
+//                }
+//                if (typeof weight == 'undefined') {
+//                    var weight = 0;
+//                }
+
+                allPath.push(nodeIndexOne);
+//                console.log('------------------------------');
+//                console.log('nodeIndexOne : ' +nodeIndexOne);
+//                console.log('nodeIndexTwo : ' +nodeIndexTwo);
+//                console.log('allPath : ' + allPath);
+//                console.log('weight : ' + weight);
+
+
+                if (nodeIndexOne == nodeIndexTwo) {
+//                    console.log('EXIT HERE!');
+                    return {
+                        allPath: allPath,
+                        weight : weight
+                    };
+                }
+
+                var minWeight = 999;
+                var minPath = [];
+
+                for (var i = 0; i < this.nodes.length; i++) {
+                    // выбираем все вержины в которые есть путь из nodeIndexOne
+                    if (that.matrix[nodeIndexOne][i] != 999) {
+
+                        // если через эту вершину еще не проходили
+
+//                        console.log('allPath : ' + allPath);
+//                        console.log('allPath.indexOf(' + i + ') : ' + allPath.indexOf(i));
+//                        console.log('that.matrix[' + nodeIndexOne + '][' + i + '] : ' + that.matrix[nodeIndexOne][i]);
+
+                        if (allPath.indexOf(i) == -1) {
+//                            console.log('>>>>>>>>>>>>>>>>>>>> RUN this.getRoute(' + i + ', '+nodeIndexTwo+', ['+allPath+'], ' + (weight + that.matrix[nodeIndexOne][i]) +')');
+                            var res = this.getRoute(i, nodeIndexTwo, allPath.slice(0), weight + that.matrix[nodeIndexOne][i]);
+                            if (res) {
+                                if (res.weight < minWeight) {
+//                                    console.log('1 minWeight : ' + minWeight);
+//                                    console.log('1 minPath : ' + minPath);
+                                    minWeight = res.weight;
+                                    minPath = res.allPath;
+//                                    console.log('2 minWeight : ' + minWeight);
+//                                    console.log('2 minPath : ' + minPath);
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return {
+                    allPath: minPath,
+                    weight : minWeight
+                };
+            };
+
+//            this.getRoute = function (nodeName1, nodeName2) {
+//
+//                var nodeOneIndex = that.nodes.indexOf(nodeName1);
+//                var nodeTwoIndex = that.nodes.indexOf(nodeName2);
+//
+//                var d = that.matrix[nodeOneIndex]
+//                var mark = new Array(that.nodes.length);
+//
+//                d[nodeOneIndex] = 0;
+//
+//                for (var i = 0; i < mark.length; i++) {
+//                    mark[i] = false;
+//                    d[i] = 999;
+//                }
+//
+//                for (var i = 0; i < that.nodes.length; i++) {
+//                    var v = -1;
+//                    for (var j = 0; j < that.nodes.length; j++) {
+//                        if ((!mark[j]) && ((v == -1) || (d[v] > d[j]))){
+//                            v = j;
+//                        }
+//                    }
+//
+////                    if (v != -1){
+//
+//                        mark[v] = true;
+//
+//                        for (var j = 0; j < that.nodes.length; j++) {
+//                            console.log(v);
+//                            if (d[j] > d[v] + that.matrix[v][j]){
+//                                d[j] = d[v] + that.matrix[v][j]
+//                            }
+//                        }
+////                    }
+//
+//                }
+//
+//
+//                console.log(d);
+//                console.log(mark);
+//
+//                return d;
+//            };
+
+            this.printMatrix = function () {
+
+                var strHeader = '';
+                for (var i = 0; i < that.nodes.length; i++) {
+                    strHeader += '   ' + that.nodes[i][0];
+                }
+                console.log(strHeader);
+
+
+                for (var i = 0; i < that.nodes.length; i++) {
+                    var strOut = '';
+                    for (var j = 0; j < that.nodes.length; j++) {
+                        strOut += ' ' + that.matrix[i][j];
+                    }
+                    strOut += ' | ' + that.nodes[i];
+                    console.log(strOut);
+                }
+            };
+
+            this.toJSONString = function () {
+
+                var matrixString = [];
+                for (var i = 0; i < this.nodes.length; i++) {
+                    matrixString.push('[' + this.matrix[i].join(',') + ']');
+                }
+                var str = '{ "nodes": ["' + this.nodes.join('","') + '"],"matrix":[' + matrixString.join(',') + ']}';
+                return str;
+            }
+
+        };
+
+        var gr1 = new BGraph();
+
+        //        gr1.addNode('вирастоль');
+        //        gr1.addNode('стагород');
+        //        gr1.addNode('тракт');
+        //        gr1.addNode('проселок');
+        //        gr1.addNode('ярмарка');
+        //        gr1.addNode('чернолесье');
+        //        gr1.addNode('погост');
+        //        gr1.addNode('поместье раввика');
+        //        gr1.buildMatrix();
+        gr1.printMatrix();
+
+        gr1.addRoute('ярмарка', 'вирастоль');   // +
+
+        gr1.addRoute('вирастоль', 'проселок');  // +
+        gr1.addRoute('вирастоль', 'ярмарка');   // +
+
+        gr1.addRoute('проселок', 'тракт');      // +
+        gr1.addRoute('проселок', 'вирастоль');  // +
+        gr1.addRoute('проселок', 'чернолесье'); // +
+
+        gr1.addRoute('тракт', 'стагород');      // +
+        gr1.addRoute('тракт', 'гати');          // +
+        gr1.addRoute('тракт', 'проселок');      // +
+        gr1.addRoute('тракт', 'мавкина_роща');  // +
+        gr1.addRoute('тракт', 'погост');        // +
+
+        gr1.addRoute('стагород', 'тракт');              // +
+        gr1.addRoute('стагород', 'зябкое_ущелье');      // +
+        gr1.addRoute('стагород', 'поместье_раввика');   // +
+        gr1.addRoute('стагород', 'слободка');           // +
+        gr1.addRoute('стагород', 'коллектор');          // +
+        gr1.addRoute('стагород', 'верхний_город');      // +
+
+        gr1.addRoute('гати', 'тракт');                  // +
+        gr1.addRoute('гати', 'гнилая_топь');            // +
+
+        gr1.addRoute('мавкина_роща', 'тракт');          // +
+        gr1.addRoute('мавкина_роща', 'ящеркин_хутор');  // +
+
+        gr1.addRoute('погост', 'тракт');                // +
+
+        gr1.addRoute('зябкое_ущелье', 'стагород');      // +
+        gr1.addRoute('зябкое_ущелье', 'мертвый_каньон');// +
+        gr1.addRoute('зябкое_ущелье', 'малые_пупыри');  // +
+
+        gr1.addRoute('поместье_раввика', 'стагород');       // +
+        gr1.addRoute('поместье_раввика', 'потайной_ход');   // +
+        gr1.addRoute('поместье_раввика', 'терем_раввика');  // +
+
+        gr1.addRoute('слободка', 'стагород');               // +
+        gr1.addRoute('слободка', 'лавка_контрабанды');      // +
+
+        gr1.addRoute('коллектор', 'стагород');              // +
+        gr1.addRoute('коллектор', 'коридор_катакомб');      // +
+
+        gr1.addRoute('верхний_город', 'стагород');          // +
+        gr1.addRoute('верхний_город', 'мастер_рун');        // +
+
+        gr1.addRoute('гнилая_топь', 'гати');                // +
+        gr1.addRoute('гнилая_топь', 'чернолесье');          // +
+        gr1.addRoute('гнилая_топь', 'ящеркин_хутор');       // +
+
+        gr1.addRoute('ящеркин_хутор', 'гнилая_топь');       // +
+        gr1.addRoute('ящеркин_хутор', 'чернолесье');        // +
+        gr1.addRoute('ящеркин_хутор', 'мавкина_роща');      // +
+
+        gr1.addRoute('мертвый_каньон', 'зябкое_ущелье');        // +
+        gr1.addRoute('мертвый_каньон', 'пешера_древних');       // +
+        gr1.addRoute('мертвый_каньон', 'лес_духов');            // +
+        gr1.addRoute('мертвый_каньон', 'пешера_стеклодувов');   // +
+
+        gr1.addRoute('малые_пупыри', 'зябкое_ущелье');          // +
+
+        gr1.addRoute('потайной_ход', 'поместье_раввика');       // +
+        gr1.addRoute('потайной_ход', 'похоронный_зал');         // +
+
+        gr1.addRoute('терем_раввика', 'поместье_раввика');      // +
+
+        gr1.addRoute('лавка_контрабанды', 'слободка');          // +
+
+        gr1.addRoute('коридор_катакомб', 'коллектор');          // +
+        gr1.addRoute('коридор_катакомб', 'северный_коридор');
+        gr1.addRoute('коридор_катакомб', 'южный_коридор');
+
+        gr1.addRoute('мастер_рун', 'верхний_город');
+
+        gr1.addRoute('чернолесье', 'проселок');
+        gr1.addRoute('чернолесье', 'гнилая_топь');
+        gr1.addRoute('чернолесье', 'ящеркин_хутор');
+
+        gr1.addRoute('пешера_древних', 'мертвый_каньон');
+
+        gr1.addRoute('лес_духов', 'мертвый_каньон');
+        gr1.addRoute('лес_духов', 'плачущее_озеро');
+
+        gr1.addRoute('пешера_стеклодувов', 'мертвый_каньон');
+
+        gr1.addRoute('похоронный_зал', 'северный_коридор');
+        gr1.addRoute('похоронный_зал', 'южный_коридор');
+        gr1.addRoute('похоронный_зал', 'потайной_ход');
+        gr1.addRoute('похоронный_зал', 'древний_храм');
+
+
+        var result = gr1.getRouteByNodeNames('верхний_город', 'гати')
+        console.log(result);
+        //
+        //        console.log(result.allPath);
+        //        var strPath = '';
+        //        for (var i = 0; i < result.allPath.length; i++) {
+        //            strPath += ' >>> ' + gr1.nodes[result.allPath[i]];
+        //        }
+        //
+        //        console.log(strPath);
+
+
+        gr1.printMatrix();
+        console.log(gr1.toJSONString());
+        //
+        //        console.log(gr1)
+        //        console.log(gr1.matrix)
+        //        console.debug(gr1.matrix)
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

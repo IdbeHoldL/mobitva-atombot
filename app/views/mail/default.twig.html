@@ -1,0 +1,62 @@
+<html>
+
+<body style="background-color: #282828;">
+<br />
+<br />
+<br />
+<table style="width: 600px; margin-left: auto; margin-right: auto; margin-top: 15px;
+/* border: solid 1px; */
+background-color: #EAEAEA;
+/*background-color: #c0c0c0;*/
+">
+    <tr>
+        <td style="padding-bottom: 10px;">
+            <a href="http://mobitva.atom-bot.ru">
+                <img src="http://mobitva.atom-bot.ru/styles/images/screen/mobitva_logo_big.jpg" alt="mobitva.atom-bot.ru" width="200px;"/>
+            </a>
+        </td>
+        <td colspan="2" style="padding-bottom: 10px; text-align: center; vertical-align: middle;">
+            <a href="http://mobitva.atom-bot.ru">
+                mobitva.atom-bot.ru
+            </a>
+
+            <p>
+                Бот для онлайн игры мобитва.
+            </p>
+        </td>
+    </tr>
+    <tr style="background-color: #cccccc;">
+        <td colspan="3" style="color: #1c1c1c; font-size: 20px; font-family: 'PT Sans', sans-serif; padding: 3px; ">
+            <b>
+                {% block mail_subject %}
+                    {{ subject }}
+                {% endblock %}
+            </b>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" style="padding: 10px 3px 10px 3px;">
+            {% block mail_body %}
+            {% endblock %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="http://vk.com/mobitva_bot">
+                <img src="http://mobitva.atom-bot.ru/styles/images/vk.png" alt="группа в ВК"></a>
+            </a>
+        </td>
+        <td></td>
+        <td style="text-align: right; padding-top: 10px;">
+            С уважением, администрация сайта <br/>
+            <a href="http://mobitva.atom-bot.ru">
+                mobitva.atom-bot.ru
+            </a>
+        </td>
+    </tr>
+</table>
+<br />
+<br />
+<br />
+</body>
+<html>

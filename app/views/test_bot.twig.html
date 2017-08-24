@@ -1,0 +1,169 @@
+<html>
+<head>
+    <script src="/scripts/jquery.min.js"></script>
+    <script src="/scripts/jquery_ui.js"></script>
+    <script src="http://mobitva-bot.local/api/get-core/1/2"></script>
+    <script>
+        MobitvaBot.loadSettings({"comboArray": [2, 3, 3], "useBlock": true, "useFlask": true, "startBlockTurn": 3, "useFlaskStartTurn": 3, "useFlaskStep": 5});
+        MobitvaBot.loadTasks([["hunt",["Дух Земли"]]]);
+//        MobitvaBot.loadTasks([["robbery_attack",[]],["duel",["Хулиган","10"]]]);
+
+        MobitvaBot.getScreenParamsStringList()
+
+    </script>
+</head>
+<body>
+
+<div style="width: 100%;">
+    <table>
+        <tr>
+            <td style="width: 10%; background-color: #a1a1a1">Номер текущей задачи</td>
+            <td style="width: 50%; background-color: #d9d9d9">Свойства объекта</td>
+            <td style="width: 30%; background-color: #a1a1a1 ">Параметры</td>
+            <td style="width: 30%; background-color: #a1a1a1">Список задач</td>
+        </tr>
+        <tr>
+            <td style="background-color: #a1a1a1">
+                <span id="task_index"></span>
+            </td>
+            <td style="background-color: #d9d9d9">
+                <span id="task_description"></span>
+            </td>
+            <td style="background-color: #a1a1a1">
+                <span id="task_params"></span>
+            </td>
+            <td style="background-color: #a1a1a1">
+                <span id="task_list"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="border: solid 1px; float: left; width: 49%; height: 80%;">
+    <h3>Экраны</h3>
+
+    <div id="screen_list"></div>
+</div>
+
+<div style="border: solid 1px; float: right; width: 49%;">
+    <h3>Лог Команд</h3>
+
+    <div id="bot_commands_log" style="width: 100%; height: 50%; overflow: scroll;">
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var prevTempObj = {};
+    var tempObj = {};
+
+    /**
+     *
+     * @param {AtomBotScreen} botScreen
+     */
+    function drawScreenButton(botScreen) {
+        var $input = $('<input>')
+                .attr('type', 'button')
+                .addClass('screen_button')
+                .attr('value', botScreen.name);
+        $('#screen_list').append($input).append('<br />');
+    }
+
+    /**
+     *
+     * @param {AtomBotScreen[]} botScreenListArray
+     * @constructor
+     */
+    function DrawButtonsForAllScreens(botScreenListArray) {
+
+        for (var i in botScreenListArray) {
+            // todo: тут добавить проверку вложенных экранов
+
+            drawScreenButton(botScreenListArray[i]);
+
+            DrawButtonsForAllScreens(botScreenListArray[i].subScreens);
+        }
+    }
+
+    function drawInfo() {
+        $('#task_index').text(MobitvaBot.getCurrentTaskIndex());
+
+        prevTempObj = tempObj;
+        tempObj = {};
+
+        var currentTask = MobitvaBot.getCurrentTask();
+        for (var key in currentTask) {
+            if (Object.prototype.hasOwnProperty.call(currentTask, key) && (typeof currentTask[key] !== 'function') && (typeof currentTask[key] !== 'object')) {
+                tempObj[key] = currentTask[key]
+            }
+        }
+
+//        console.log(tempObj);
+
+        var newData = '<pre>' + JSON.stringify(tempObj, null, '\t') + '</pre>';
+        if (JSON.stringify(tempObj) != JSON.stringify(prevTempObj)) {
+            $('#task_description')
+                    .animate({color: "red"}, 100)
+                    .animate({color: "black"}, 300)
+        }
+        $('#task_description').html(newData);
+
+        if (typeof MobitvaBot.getCurrentTask().params !== 'undefined') {
+            $('#task_params').html('<pre>' + JSON.stringify(MobitvaBot.getCurrentTask().params, null, '\t') + '</pre>');
+        }
+
+        $('#task_list').html('');
+        for (var i in MobitvaBot.taskList) {
+            $('#task_list').append($('<span>').html(MobitvaBot.taskList[i].name + '<br />'));
+        }
+
+
+    }
+
+    $(function () {
+
+        DrawButtonsForAllScreens(MobitvaBot.screenList);
+
+        $('.screen_button').bind('click', function () {
+
+            var screenName = $(this).val();
+            var commands = MobitvaBot.getCommandsForScreen(screenName);
+
+            var $div = $('<div>')
+                    .addClass('bot-commands-container')
+                    .append(screenName + '<br />')
+                    .append($('<div>')
+                            .addClass('bot-commands')
+                            .append(commands));
+
+            $('#bot_commands_log').append($div);
+
+            var objDiv = document.getElementById("bot_commands_log");
+            objDiv.scrollTop = objDiv.scrollHeight;
+
+            drawInfo();
+
+
+        });
+
+        drawInfo();
+
+    });
+</script>
+<style>
+    .bot-commands-container {
+        color: #a1a1a1;
+        padding: 10px;
+        background-color: #1c1c1c;
+        margin: 5px;
+    }
+
+    .bot-commands {
+        color: #000000;
+        padding: 5px;
+        background-color: #a1a1a1;
+    }
+</style>
+
+</body>
+</html>

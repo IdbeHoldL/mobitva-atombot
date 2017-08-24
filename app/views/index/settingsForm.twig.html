@@ -1,0 +1,239 @@
+{% extends  'layout.twig' %}
+
+{% block content %}
+
+    <div class="b-context" style="padding-bottom: 100px; ">
+        <h1>Создание настройки</h1>
+
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label require">Название</label>
+            </dt>
+            <dd>
+                <input id="settings_id" type="hidden">
+                <input id="settings_name" placeholder="Введите название настройки" class="n-input_text" size="50" type="text">
+            </dd>
+        </dl>
+
+        <h4>Бой</h4>
+
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Комбо</label>
+            </dt>
+            <dd>
+                <input id="combo_array" placeholder="Введите последовательность комбо (например: 1-2-2-3-2)" title="" class="n-input_text" size="50" type="text">
+            </dd>
+        </dl>
+
+        {# --------------------------------------- Блоки --------------------------------------- #}
+
+        <dl class="b-pole_form" style="margin-top: 15px;">
+            <dt class="big">
+                <label class="n-label">Ставить блок?</label>
+            </dt>
+            <dd>
+                <input id="use_block" type="checkbox"/>
+            </dd>
+        </dl>
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Ход, с которого ставить блок</label>
+            </dt>
+            <dd>
+                <div class="b-state">
+                    <select id="use_block_turn" class="n-select">
+                        {% for item in [1,2,3,4,5,6,7,8,9,10,15,20,25,30] %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </dd>
+        </dl>
+
+        {# --------------------------------------- Эликсиры --------------------------------------- #}
+
+        <dl class="b-pole_form" style="margin-top: 15px;">
+            <dt class="big">
+                <label class="n-label">Использовать эликсиры/свитки?</label>
+            </dt>
+            <dd>
+                <input id="use_flask" type="checkbox"/>
+            </dd>
+        </dl>
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Ход, с которого начать использовать эликсиры</label>
+            </dt>
+            <dd>
+                <div class="b-state">
+                    <select id="use_flask_start_turn" class="n-select">
+                        {% for item in [1,2,3,4,5,6,7,8,9,10,15,20,25,30] %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </dd>
+        </dl>
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Интервал использования <br/>(каждый N-й ход)</label>
+            </dt>
+            <dd>
+                <div class="b-state">
+                    <select id="use_flask_step" class="n-select">
+                        {% for item in [1,2,3,4,5,6,7,8,9,10,15,20,25,30,50] %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </dd>
+        </dl>
+
+        <h4>Грабежи</h4>
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">
+                    {#<span style="color: red;">#}
+                        Вмешиваться в текущие грабежи
+                        {#<br /> (настройка не работает)#}
+                    {#</span>#}
+                </label>
+            </dt>
+            <dd>
+                <input id="robbery_attack" type="checkbox"/>
+            </dd>
+        </dl>
+        <dl class="b-pole_form" style="margin-top: 25px;">
+            <dt class="big">
+                <label class="n-label">Принимать бой, при нападении<br/> на вас в грабежах</label>
+            </dt>
+            <dd>
+                <input id="robbery_defense" type="checkbox"/>
+            </dd>
+        </dl>
+
+        <h4>Прочее</h4>
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Автоматически восстанавливать <br/>выносливость, покупая вигор в Стагороде</label>
+            </dt>
+            <dd>
+                <input id="use_vigor" type="checkbox"/>
+            </dd>
+        </dl>
+
+        <dl class="b-pole_form">
+            <dt class="big">
+                <label class="n-label">Задержка после боя <br/>(в секундах)</label>
+            </dt>
+            <dd>
+                <div class="b-state">
+                    <select id="after_fight_delay" class="n-select">
+                        {% for item in [0,1,2,3,4,5,10,15,20,25,30,40,50,60] %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <span style="font-size: 12px; color: #a1a1a1;">Не забывайте выставить задержку после боя, чтобы восстановить хп</span>
+            </dd>
+        </dl>
+
+        <div class="b-state">
+            <a onclick="saveSettings(); return false;" class="n-button big green" style="float: right; margin: 20px;">Сохранить</a>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        function saveSettings() {
+
+
+            if (!$('#settings_name').val()) {
+                $.showMessage({note: 'Введите название настройки', remove: true});
+                return;
+            }
+
+            if (!$('#combo_array').val()) {
+                $.showMessage({note: 'Введите постедовательность комбо ударов', remove: true});
+                return;
+            }
+
+            var comboArray = $('#combo_array').val().split(/(\d)/).filter(function (value) {
+                return value.match(/(\d)/)
+            });
+
+            var settingsJson = {
+                'comboArray'        : comboArray,
+                'useBlock'          : document.getElementById('use_block').checked,
+                'useFlask'          : document.getElementById('use_flask').checked,
+                'useSmartFightDelay': false,
+                'startBlockTurn'    : $('#use_block_turn').val(),
+                'useFlaskStartTurn' : $('#use_flask_start_turn').val(),
+                'useFlaskStep'      : $('#use_flask_step').val(),
+                'robberyAttack'     : document.getElementById('robbery_attack').checked,
+                'robberyDefense'    : document.getElementById('robbery_defense').checked,
+                'useVigor'          : document.getElementById('use_vigor').checked,
+                'afterFightDelay'   : $('#after_fight_delay').val()
+            };
+
+            $.ajax({
+                url     : '/settings/submit',
+                method  : 'GET',
+                data    : {
+                    id  : $('#settings_id').val(),
+                    name: $('#settings_name').val(),
+                    data: JSON.stringify(settingsJson)
+                },
+                dataType: 'json',
+                success : function (response) {
+
+                    console.log(response);
+
+                    if (response.result == 1 && (typeof response.settings_id != 'undefined')) {
+                        $('#settings_id').val(response.settings_id);
+                        $.showMessage({note: 'Настройка успешно сохранена', remove: true});
+                    } else {
+                        $.showMessage({note: 'Не удалось сохранить настройку', remove: true});
+                    }
+                }
+            });
+
+            return false;
+        }
+
+    </script>
+
+
+    {% if settings is defined %}
+        <script type="text/javascript">
+
+            function CheckboxToggle(elemId, checked) {
+                var elm = document.getElementById(elemId);
+                if (checked != elm.checked) {
+                    elm.click();
+                }
+            }
+
+            var settings_id = {{ settings.id }};
+            var settings_name = '{{ settings.name }}';
+            var settings_body = {{ settings.body|raw }};
+
+            document.getElementById('settings_id').value = settings_id;
+            document.getElementById('settings_name').value = settings_name;
+            document.getElementById('combo_array').value = settings_body.comboArray.join('-');
+            CheckboxToggle('use_block', settings_body.useBlock);
+            document.getElementById('use_block_turn').value = settings_body.startBlockTurn;
+            CheckboxToggle('use_flask', settings_body.useFlask);
+            document.getElementById('use_flask_start_turn').value = settings_body.useFlaskStartTurn;
+            document.getElementById('use_flask_step').value = settings_body.useFlaskStep;
+            CheckboxToggle('robbery_attack', settings_body.robberyAttack);
+            CheckboxToggle('robbery_defense', settings_body.robberyDefense);
+            CheckboxToggle('use_vigor', settings_body.useVigor);
+            document.getElementById('after_fight_delay').value = settings_body.afterFightDelay;
+
+        </script>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends  'layout.twig' %}
+
+{% block headScripts %}
+    <script src="/scripts/locations_and_mobs.js?v={{ app.version }}"></script>
+    <script src="/scripts/taskСonstructor.js?v={{ app.version }}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% if config is defined %}
+        <script type="text/javascript">
+
+            var config_id = {{ config.id }};
+            var config_name = '{{ config.name }}';
+            var config_body = {{ config.body|raw }};
+
+            $(function () {
+
+                for (var i in config_body){
+                    var taskType = config_body[i][0];
+                    var taskParams = config_body[i][1];
+
+                    addTask(taskType, taskParams)
+                }
+
+                $('#config_id').val(config_id);
+                $('#config_name').val(config_name);
+            });
+
+            console.log(config_body);
+
+        </script>
+    {% endif %}
+
+    <div class="b-context">
+        <h1>Создание алгоритма</h1>
+
+
+        <div id="available_tasks" style="width: 25%; float: left; border: 1px; padding: 1%; background-color: rgba(100,100,100,0.5);">
+            <h2>Доступные команды</h2>
+        </div>
+
+        <div style="width: 70%; float: right; border: 1px; padding: 1%; background-color: rgba(100,100,100,0.5); padding-bottom: 40px">
+            <h2>Алгоритм</h2>
+
+            <dl class="b-pole_form">
+                <dt>
+                    <label class="n-label require">Название</label>
+                </dt>
+                <dd>
+                    <input id="config_id" type="hidden">
+                    <input id="config_name" placeholder="Введите название алгоритма" class="n-input_text" size="50" type="text">
+                </dd>
+            </dl>
+
+            <h4>Список команд</h4>
+
+            <ul class="sortable" id="task_list" data-empty-message="Добавьте команды используя кнопки слева."></ul>
+
+
+            <div class="b-state">
+                <a href="javascript:saveTaskList()" class="n-button big green" style="float: right; margin: 20px;">Сохранить</a>
+            </div>
+        </div>
+
+
+        <div style="clear: right; width: 100%;"></div>
+        <div style="clear: right; width: 100%;"></div>
+
+        <div class="b-context">
+        </div>
+
+        <style>
+            .ui-autocomplete-category {
+                font-weight: bold;
+                padding: .2em .4em;
+                margin: .8em 0 .2em;
+                line-height: 1.5;
+            }
+        </style>
+        <script>
+            $.widget("custom.catcomplete", $.ui.autocomplete, {
+                _create    : function () {
+                    this._super();
+                    this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+                },
+                _renderMenu: function (ul, items) {
+                    var that = this,
+                        currentCategory = "";
+                    $.each(items, function (index, item) {
+                        var li;
+                        if (item.category != currentCategory) {
+                            ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
+                            currentCategory = item.category;
+                        }
+                        li = that._renderItemData(ul, item);
+                        if (item.category) {
+                            li.attr("aria-label", item.category + " : " + item.label);
+                        }
+                    });
+                }
+            });
+        </script>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                $(".sortable").sortable();
+            });
+
+        </script>
+
+{% endblock %}

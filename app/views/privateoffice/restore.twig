@@ -1,0 +1,50 @@
+{% extends  'layout.twig' %}
+
+{% block content %}
+
+    {% if user %}
+
+        <div class="b-context">
+            <h1>Придумайте пароль</h1>
+
+            <form id="restore_form">
+                <input type="hidden" name="restore_key" value="{{ restore_key }}"/>
+
+                <div class="b-popup_content">
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Email</label>
+                        </dt>
+                        <dd>
+                            <input type="email" size="35" placeholder="" disabled="disabled" value="{{ user.email }}" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Пароль</label>
+                        </dt>
+                        <dd>
+                            <input type="password" name="password" size="35" placeholder="password" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Повторите пароль</label>
+                        </dt>
+                        <dd>
+                            <input type="password" name="password_confirm" size="35" placeholder="password" class="n-input_text">
+                        </dd>
+                    </dl>
+                </div>
+            </form>
+            <a id="restore_form_submit" href="javascript:void(0)" class="n-button normal black">Сохранить</a>
+        </div>
+    {% else %}
+        <div class="b-context">
+        <h1>Восстановление пароля</h1>
+            Ссылка устарела, попробуйте повторить процедуру восстановления пароля
+            <a href="javascript:void(0)" class="n-button small black">Восстановить пароль</a>
+        </div>
+
+    {% endif %}
+{% endblock %}

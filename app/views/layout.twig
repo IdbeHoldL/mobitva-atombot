@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>mobitva.atom-bot.ru</title>
+    <link rel="stylesheet" href="/styles/css/common.css">
+    <link rel="stylesheet" href="/styles/css/jquery_ui.css">
+    <script src="/scripts/jquery.min.js"></script>
+    <script src="/scripts/jquery_ui.js"></script>
+    <script src="/scripts/fancySelect.js"></script>
+    <script src="/scripts/owl.carousel.js"></script>
+    <script src="/scripts/message.js"></script>
+    <script src="/scripts/frontend.js"></script>
+    {% block headScripts %}
+    {% endblock %}
+    <!--if (process.env.NODE_ENV === 'development')script(src='http://:NaN/livereload.js?snipver=1')
+    -->
+</head>
+<body>
+<div class="bw-contener">
+    <div class="b-center relative">
+        <div class="bg-background"></div>
+        <div class="bw-header">
+            <div class="b-header">
+                <a href="/" class="b-logo_link"><span class="b-logo_image"></span></a>
+
+                <div class="b-header_panel">
+                    <div class="b-signin">
+                        {% if app.current_user is defined %}
+                            <a href="/privateoffice">
+                                {{ app.current_user.email }}
+                            </a>
+                            <a href="/logout" class="n-button small black">выход</a>
+                        {% else %}
+                            <a href="javascript:void(0)" class="n-button normal black j-login">Вход</a>
+                            <a href="javascript:void(0)" class="n-button normal black j-register">Регистрация</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="bw-navbar">
+                    <div class="b-navbar">
+                        <a href="/" {% if app.request.getPathInfo() == '/' %}class="active"{% endif %}>Главная</a>
+                        {#<a href="/bot-info" {% if app.request.getPathInfo() == '/bot-info' %}class="active"{% endif %}>Возможности бота</a>#}
+                        <a href="/kemulator" {% if app.request.getPathInfo() == '/kemulator' %}class="active"{% endif %}>Настройка Эмулятора</a>
+                        <a href="/payment-info" {% if app.request.getPathInfo() == '/payment-info' %}class="active"{% endif %}>Способы оплаты</a>
+                        <a href="/contacts" {% if app.request.getPathInfo() == '/contacts' %}class="active"{% endif %}>Контакты</a>
+                        {#<a href="#" {% if app.request.getPathInfo() == '' %}class="active"{% endif %}>Интсрукции</a>#}
+                        {% if app.current_user is defined %}
+                            <a href="/privateoffice" style="float: right;" {% if app.request.getPathInfo() in ['/privateoffice'] %}class="active"{% endif %} >Личный кабинет</a>
+                            {#<a href="/privateoffice" style="float: right;" {% if app.request.getPathInfo() in ['/settings/create'] %}class="active"{% endif %} >Алголитмы</a>#}
+                            {#<a href="/privateoffice" style="float: right;" {% if app.request.getPathInfo() in [''] %}class="active"{% endif %} >Настройки</a>#}
+                            {#<a href="/privateoffice" style="float: right;" {% if app.request.getPathInfo() in [''] %}class="active"{% endif %} >Лицензии</a>#}
+                        {% endif %}
+                    </div>
+                    {% if app.current_user is defined %}
+                        <div class="b-navbar">
+
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="bw-content">
+                <div class="b-content">
+
+                    {#{{ app.request.getPathInfo() }}#}
+
+                    {% block content %}
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="b-center" style="margin-top: 20px; margin-bottom: 20px;">
+    <!-- begin WebMoney Transfer : attestation label -->
+    <a href="https://www.megastock.ru/">
+        <img src="/styles/images/88x31_wm_blue_on_transparent_ru.png"/>
+    </a>
+    <!-- end WebMoney Transfer : attestation label -->
+</div>
+<div class="b-center">
+    <div class="b-footer">
+        <div class="b-footer_left">
+            <div class="b-copy">Copyright &copy; 2016 mobitva.atom-bot.ru
+            </div>
+        </div>
+        <div class="b-footer_right">
+            <div class="b-navbar">
+                {#<a href="homepage.html" class="active">____</a>#}
+                {#<a href="records.html">____</a>#}
+                {#<a href="download.html">____</a>#}
+                <a target="_blank" href="/payback">Возврат денежных средств</a>
+                <a target="_blank" href="/terms">Пользовательское Соглашение</a>
+                <a target="_blank" href="/eula">Лицензионное Соглашение</a>
+            </div>
+            <div class="b-snetwork">
+                <a href="http://vk.com/mobitva_bot" class="l-sn vk"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'popups.twig' %}
+
+</body>
+</html>

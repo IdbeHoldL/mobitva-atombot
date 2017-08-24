@@ -1,0 +1,16 @@
+{% extends  'mail/default.twig.html' %}
+
+{% block mail_body %}
+    <p>
+        Здравствуйте! Вы, или кто-то другой, запросили восстановления пароля на сайте mobitva.atom-bot.ru<br/>
+        Чтобы задать новый пароль пройдите по ссылке: <br/>
+        <a href="http://mobitva.atom-bot.ru/privateoffice/restore/{{ restore_key }}">Задать пароль</a> <br/>
+        Либо скопируйте ссылку и вставьте ее в браузенрую строку: <br/>
+        <br/>
+        <br/>
+        http://mobitva.atom-bot.ru/privateoffice/restore/{{ restore_key }}
+        <br/>
+    </p>
+{% endblock %}
+
+

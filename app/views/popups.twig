@@ -1,0 +1,123 @@
+{#логин-попап#}
+
+<div class="bw-bg_popup j-login-popup">
+    <div style="top: 200px;" class="bw-npopup">
+        <div class="b-npopup gray">
+            <div class="b-popup_head">
+                <h2>Авторизация</h2><a href="javascript:void(0);" class="l-close js-close"></a>
+            </div>
+            <form id="login_form">
+                <div class="b-popup_content">
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Email</label>
+                        </dt>
+                        <dd>
+                            <input name="email" type="email" placeholder="example@mail.com" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Пароль</label>
+                        </dt>
+                        <dd>
+                            <input name="password" type="password" placeholder="password" class="n-input_text">
+                        </dd>
+                    </dl>
+                </div>
+            </form>
+            <div class="b-popup_footer">
+                <div style="float: left; padding: 10px;">
+                    <a href="javascript:void(0)" class="j-restore">Забыли пароль?</a>
+                </div>
+                <a id="login_form_submit" href="javascript:void(0)" class="n-button normal black">Войти</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="bw-bg_popup j-register-popup">
+    <div style="top: 200px;" class="bw-npopup">
+        <div class="b-npopup gray">
+            <div class="b-popup_head">
+                <h2>Регистрация</h2><a href="javascript:void(0);" class="l-close js-close"></a>
+            </div>
+            <form id="register_form">
+                <div class="b-popup_content">
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Email</label>
+                        </dt>
+                        <dd>
+                            <input type="email" name="email" placeholder="example@mail.com" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Пароль</label>
+                        </dt>
+                        <dd>
+                            <input type="password" name="password" placeholder="password" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Повторите пароль</label>
+                        </dt>
+                        <dd>
+                            <input type="password" name="password_confirm" placeholder="password" class="n-input_text">
+                        </dd>
+                    </dl>
+                    <dl class="b-pole_form">
+                        <input type="checkbox" id="terms_confirm">
+                        Я принимаю условия <a target="_blank" href="/terms">пользовательского соглашения</a>.
+                    </dl>
+
+                </div>
+            </form>
+
+            <div class="b-popup_footer"><a href="javascript:void(0)" id="register_form_submit" class="n-button normal black">Отправить</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="bw-bg_popup j-restore-popup">
+    <div style="top: 200px;" class="bw-npopup">
+        <div class="b-npopup gray">
+            <div class="b-popup_head">
+                <h2>Восстановление пароля</h2><a href="javascript:void(0);" class="l-close js-close"></a>
+            </div>
+            <form id="restore_form">
+                <div class="b-popup_content">
+                    <dl class="b-pole_form">
+                        <dt>
+                            <label class="n-label require">Email</label>
+                        </dt>
+                        <dd>
+                            <input type="email" name="email" placeholder="example@mail.com" class="n-input_text">
+                        </dd>
+                    </dl>
+                </div>
+            </form>
+            <div class="b-popup_footer"><a href="javascript:void(0)" id="restore_form_submit" class="n-button normal black">Восстановить</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="bw-bg_gallery">
+    <div class="b-close js-close_gallery"></div>
+    <a href="javascript:void(0);" class="l-close js-close_gallery"></a>
+
+    <div class="bw-ngallery">
+        <div class="b-close js-close_gallery"></div>
+        <div class="b-ngallery">
+            <div class="b-gallery_content">
+                <div class="b-image_content"><img src="" alt=""></div>
+                {#<p class="s-text_image">Respawning Loot Experiments</p>#}
+            </div>
+            <div class="b-gallery_footer">
+                {#<span class="s-date">Добавленно 14.05.2014</span>#}
+                {#<span class="s-separator"></span><a href="javascript:void(0)" class="l-image">Удалить изображение</a>#}
+            </div>
+        </div>
+    </div>
+</div>

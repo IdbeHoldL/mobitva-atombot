@@ -1,0 +1,115 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+
+    <div class="b-context">
+        <h1>KEmulator v0.98</h1>
+
+        <p>
+            Бот работает через эмулятор <span style="font-size: 12px"><b>KEmulator v0.98</b></span>. Для правильной работы бота эмулятор
+            должен быть настроен определенным образом. Если у вас еще не установлен данный эмулятор, либо вы не хотите самостоятельно заниматься
+            его настройкой, то вы можете <br/><b>скачать настроенный KEmulator v0.98</b> по данной ссылке
+            <a href="http://mobitva.atom-bot.ru/files/KEmulator.zip">
+                http://mobitva.atom-bot.ru/files/KEmulator.zip
+            </a>
+
+            <br/>
+            <br/>
+            ВНИМАНИЕ! ДЛЯ РАБОТЫ ЭМУЛЯТОРА В СИСТЕМЕ ДОЛЖНА БЫТЬ УСТАНОВЛЕНА JAVA <br/>
+            Скачать и установить java вы можете на официальном сайте:
+            <a href="https://www.java.com/ru/download/">
+                https://www.java.com/ru/download/
+            </a>
+        </p>
+
+        <br/>
+        <br/>
+
+        <p style="font-size: 16px;">
+            <b>
+                Тект ниже предназначен для тех, кто хочет самостоятельно выставить нужные настройки, либо убедиться, что
+                они выставлены правильно.
+            </b>
+        </p>
+
+
+        <div class="b-img_content">
+            <div class="b-img left">
+                <a href="/styles/images/screen/kemulator/settings_1.png" class="l-show_image">
+                    <img src="/styles/images/screen/kemulator/settings_1.png"/>
+                </a>
+
+                <div class="b-title">Настройка размера клиентской части окна</div>
+            </div>
+            <p>
+                Первым дело нужно выбрать модель телефона - <b>SonyEricssonK800</b>, кодировку <b>ISO-8859-1</b><br/>
+                A также установить размер экрана <b>240х640</b> <br/>(см. скриншот)
+            </p>
+        </div>
+
+        <div class="b-img_content">
+            <div class="b-img left">
+                <a href="/styles/images/screen/kemulator/settings_2.png" class="l-show_image">
+                    <img src="/styles/images/screen/kemulator/settings_2.png"/>
+                </a>
+
+                <div class="b-title">Настройка шрифта</div>
+            </div>
+            <p>
+                Затем следует настроить шрифт. Нужно выбрать <b>Lucida Console</b>. <br/>
+                Размер шрифта - <b>8px</b>, как на скриншоте слева
+            </p>
+
+        </div>
+
+        <div class="b-img_content">
+            <div class="b-img left">
+                <a href="/styles/images/screen/kemulator/settings_3.png" class="l-show_image">
+                    <img src="/styles/images/screen/kemulator/settings_3.png"/>
+                </a>
+
+                <div class="b-title">Настройки графики 2D</div>
+            </div>
+            {#<div class="b-img left">#}
+            {#<a href="/styles/images/screen/kemulator/settings_4.png" class="l-show_image">#}
+            {#<img src="/styles/images/screen/kemulator/settings_4.png"/>#}
+            {#</a>#}
+
+            {#<div class="b-title">Настройки графики 3D</div>#}
+            {#</div>#}
+            <p>
+                Настройка графического движка. <br/>
+                Для 2D - <b>AWT-Graphics</b><br/>
+                {#Для 3D - <b>LWJ-OpenGL</b><br />#}
+            </p>
+
+        </div>
+
+
+        <p style="text-align: center;">
+            Поздравляем. Эмулятор настроен. <br/>
+            Если все сделано правильно, то эмулятор должен выглядеть примерно вот так
+        </p>
+
+        <div class="b-img_content">
+
+            <div style="width: 440px; margin-right: auto; margin-left: auto;">
+                <div class="b-img right">
+                    <a href="/styles/images/screen/kemulator/1.png" class="l-show_image">
+                        <img src="/styles/images/screen/kemulator/1.png" style="float: left;"/>
+                    </a>
+                </div>
+                <div class="b-img left">
+                    <a href="/styles/images/screen/kemulator/2.png" class="l-show_image">
+                        <img src="/styles/images/screen/kemulator/2.png" style="float: left;"/>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+{% endblock %}
